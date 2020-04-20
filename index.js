@@ -230,7 +230,8 @@
               break;
           }
           /* version 03 year 2005 */
-          case 3: {
+          case 3:
+          case 4: {
               parseRegex = new RegExp(
                   '(DCA.*?)?' + // Jurisdiction-specific vehicle class
                   '(DCB.*?)?' + // Jurisdiction-specific restriction codes
@@ -327,7 +328,6 @@
                   '(DDE.*?)?' + // Family name truncation
                   '(DDF.*?)?' + // First name truncation
                   '(DDG.*?)?' + // Middle name truncation
-                  /* optional elements
                   '(DAH.*?)?' + // Address – Street 2
                   '(DAZ.*?)?' + // Hair color
                   '(DCI.*?)?' + // Place of birth
@@ -356,13 +356,13 @@
                   '(DDJ.*?)?' + // Under 21 Until
                   '(DDK.*?)?' + // Organ Donor Indicator
                   '(DDL.*?)?'   // Veteran Indicator
-                  */
-                  '$'
               );
               break;
           }
+          case 5:
           case 8:
           case 9: {
+            console.log("Versions 5,8,9")
             var prefixes = [
                 'DCA', // jurisdiction vehicle class
                 'DCB', // jurisdiction restriction codes
@@ -449,6 +449,7 @@
                 parsedData[ String(res[i]).substring(0,3) ] = res[i].substring(3).trim();
             }
         }
+        console.log(parsedData)
 
         switch( Number(version[1]) ) {
             case 1: {
@@ -508,7 +509,7 @@
             "postal_code": parsedData.DAK ? (parsedData.DAK.match(/\d{-}\d+/) ? parsedData.DAK : parsedData.DAK.substring(0,5)) : undefined,
             "klass": parsedData.DCA,
             "class": parsedData.DCA,
-            "restrictions": undefined,
+            "restrictions": parsedData.DCB,
             "endorsments": undefined,
             "sex": function() {
                 switch( Number(parsedData.DBC) ) {
@@ -528,10 +529,10 @@
                         break;
                 }
             }(),
-            "height": undefined,
+            "height": parsedData.DAU,
             "weight": undefined,
             "hair_color": undefined,
-            "eye_color": undefined,
+            "eye_color": parsedData.DAY,
             "misc": undefined,
             "id": function(){
                 if (!parsedData.DAQ) return;
